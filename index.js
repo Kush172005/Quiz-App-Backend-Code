@@ -22,6 +22,11 @@ app.post("/signup", async (req, res) => {
     }
 
     try {
+        const validation = Validator.inputValidation({ email, password });
+        if (!validation.isInputValid) {
+            return res.status(400).json({ message: `${validation.msg}` });
+        }
+
         const userExists = await VoterService.getVoterByEmail(email);
         console.log(userExists);
         if (userExists) {
