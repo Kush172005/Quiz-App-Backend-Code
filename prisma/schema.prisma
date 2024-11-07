@@ -7,35 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
+model user {
   id       Int    @id @default(autoincrement())
   email    String @unique
   password String
   name     String
-  quizzes  Quiz[]
+
+  quizzes quiz[] // One-to-many relationship: a user can have multiple quizzes
 }
 
-model Voter {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
+model quiz {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+
+  userId    Int // Foreign key to the users table
+  user      user       @relation(fields: [userId], references: [id])
+  questions question[] // One-to-many relationship: a quiz can have multiple questions
 }
 
-model Quiz {
-  id        Int        @id @default(autoincrement())
-  title     String
-  userId    Int
-  user      users      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  questions Question[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-}
+model question {
+  id            Int    @id @default(autoincrement())
+  title         String
+  options       Json
+  correctAnswer Json
+  explanation   String
 
-model Question {
-  id           Int     @id @default(autoincrement())
-  quizId       Int
-  quiz         Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  questionText String
-  explanation  String?
+  quizId Int // Foreign key to the quiz table
+  quiz   quiz @relation(fields: [quizId], references: [id])
 }
