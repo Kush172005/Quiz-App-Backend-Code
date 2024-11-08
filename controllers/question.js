@@ -8,7 +8,7 @@ const create = async (req, res) => {
             return res.status(400).json({ message: "All Fields are required" });
         }
 
-        await prismaClient.question.create({
+        const data = await prismaClient.question.create({
             data: {
                 title,
                 options,
@@ -20,7 +20,7 @@ const create = async (req, res) => {
 
         return res
             .status(200)
-            .json({ message: "Question Created Successfully" });
+            .json({ message: "Question Created Successfully", data });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Internal Server Error" });
@@ -29,29 +29,26 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const { id } = req.params;
         const {
             title,
-            description,
             options,
             correctAnswer,
             explanation,
-            quizId,
+            id: questionId,
         } = req.body;
 
-        if (!title || !options || !correctAnswer || !explanation || !quizId) {
+        console.log(req.body);
+        if (!title || !options || !correctAnswer || !explanation || !questionId) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
         await prismaClient.question.update({
-            where: { id: parseInt(id) },
+            where: { id:questionId },
             data: {
                 title,
-                description,
                 options,
                 correctAnswer,
                 explanation,
-                quizId,
             },
         });
 
@@ -66,7 +63,7 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.body;
 
         if (!id) {
             return res.status(400).json({ message: "Question ID is required" });

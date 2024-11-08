@@ -11,7 +11,7 @@ const quizRoutes = express.Router();
 
 quizRoutes.get("/get", getAll);
 quizRoutes.put("/update/:id", update);
-quizRoutes.delete("/delete/:id", remove);
+quizRoutes.delete("/delete", remove);
 quizRoutes.post("/create", create);
 quizRoutes.get("/get/:id", getById);
 

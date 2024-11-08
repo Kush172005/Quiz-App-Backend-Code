@@ -57,7 +57,7 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.body;
         await prismaClient.quiz.delete({
             where: { id: parseInt(id) },
         });
