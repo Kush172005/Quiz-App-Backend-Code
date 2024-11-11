@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "AccessType" AS ENUM ('private', 'public', 'restricted');
+
 -- CreateTable
 CREATE TABLE "user" (
     "id" SERIAL NOT NULL,
@@ -13,6 +16,8 @@ CREATE TABLE "quiz" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "accessType" "AccessType" NOT NULL DEFAULT 'public',
+    "accessTo" INTEGER[] DEFAULT ARRAY[]::INTEGER[],
     "userId" INTEGER NOT NULL,
 
     CONSTRAINT "quiz_pkey" PRIMARY KEY ("id")

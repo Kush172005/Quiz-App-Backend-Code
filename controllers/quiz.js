@@ -1,17 +1,43 @@
 const { prismaClient } = require("../config/database");
+const { User } = require("../services/user");
 
 const create = async (req, res) => {
     try {
-        const { title, description = "placeholder" } = req.body;
+        const {
+            title,
+            description = "placeholder",
+            accessType = "public",
+            accessTo = [],
+        } = req.body;
         const userId = req.id;
+
         if (!title) {
             return res.status(400).json({ message: "Title is required" });
         }
+
+        if (!["private", "public", "restricted"].includes(accessType)) {
+            return res.status(400).json({ message: "Invalid access type" });
+        }
+
+        if (accessType === "restricted" && accessTo.length === 0) {
+            return res.status(400).json({
+                message:
+                    "Access to users (emails) is required for restricted quizzes",
+            });
+        }
+
+        const users = await User.getUserFromEmail(accessTo);
+
+        const userIds = users.map((user) => {
+            return user.id;
+        });
 
         const quiz = await prismaClient.quiz.create({
             data: {
                 title,
                 description,
+                accessType,
+                accessTo: userIds,
                 userId,
             },
         });
@@ -74,7 +100,18 @@ const getAll = async (req, res) => {
         const userId = req.id;
 
         const quizzes = await prismaClient.quiz.findMany({
-            where: { userId },
+            where: {
+                OR: [
+                    // for my Public quizzes
+                    { accessType: "public" },
+
+                    // for the Restricted quizzes where the user has access
+                    { accessType: "restricted", accessTo: { has: userId } },
+
+                    // for the quizzes created by the user
+                    { userId: userId },
+                ],
+            },
         });
 
         return res.status(200).json({ quizzes });

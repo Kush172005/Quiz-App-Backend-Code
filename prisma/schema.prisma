@@ -13,17 +13,19 @@ model user {
   password String
   name     String
 
-  quizzes quiz[] // One-to-many relationship: a user can have multiple quizzes
+  quizzes quiz[]
 }
 
 model quiz {
-  id          Int    @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   title       String
   description String
+  accessType  AccessType @default(public) // Default accessType set to 'public'
+  accessTo    Int[]      @default([]) // Default accessTo set to an empty array
 
-  userId    Int // Foreign key to the users table
+  userId    Int
   user      user       @relation(fields: [userId], references: [id])
-  questions question[] // One-to-many relationship: a quiz can have multiple questions
+  questions question[]
 }
 
 model question {
@@ -33,6 +35,12 @@ model question {
   correctAnswer Json
   explanation   String
 
-  quizId Int // Foreign key to the quiz table
+  quizId Int
   quiz   quiz @relation(fields: [quizId], references: [id])
+}
+
+enum AccessType {
+  private
+  public
+  restricted
 }
