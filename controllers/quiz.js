@@ -98,6 +98,15 @@ const remove = async (req, res) => {
 const getAll = async (req, res) => {
     try {
         const userId = req.id;
+        console.log(
+            { accessType: "public" },
+
+            // for the Restricted quizzes where the user has access
+            { accessType: "restricted", accessTo: { has: userId } },
+
+            // for the quizzes created by the user
+            { userId: userId }
+        );
 
         const quizzes = await prismaClient.quiz.findMany({
             where: {
