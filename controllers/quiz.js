@@ -98,17 +98,21 @@ const remove = async (req, res) => {
 const getAll = async (req, res) => {
     try {
         const userId = req.id;
-        console.log(
-            { accessType: "public" },
 
-            // for the Restricted quizzes where the user has access
-            { accessType: "restricted", accessTo: { has: userId } },
+        const quizzes = await prismaClient.quiz.findMany({
+            where: {
+                OR: [
+                    // for my Public quizzes
+                    { accessType: "public" },
 
-            // for the quizzes created by the user
-            { userId: userId }
-        );
+                    // for the Restricted quizzes where the user has access
+                    { accessType: "restricted", accessTo: { has: userId } },
 
-        const quizzes = await prismaClient.quiz.findMany()
+                    // for the quizzes created by the user
+                    { userId: userId },
+                ],
+            },
+        });
 
         return res.status(200).json({ quizzes });
     } catch (error) {
