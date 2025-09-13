@@ -31,7 +31,7 @@ app.listen(4000, () => {
 
 cron.schedule("*/10 * * * *", async () => {
     try {
-        const url = "https://quiz-app-backend-code.onrender.com";
+        const url = "https://quiz-app-backend-code.onrender.com/ping";
 
         const res = await fetch(url);
         console.log("Ping status:", res);
