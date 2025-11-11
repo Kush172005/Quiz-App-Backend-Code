@@ -29,7 +29,7 @@ app.listen(4000, () => {
     console.log("Server running on http://localhost:4000");
 });
 
-cron.schedule("*/10 * * * *", async () => {
+cron.schedule("*/5 * * * *", async () => {
     try {
         const url = "https://quiz-app-backend-code.onrender.com/ping";
 
