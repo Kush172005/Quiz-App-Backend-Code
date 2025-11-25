@@ -9,6 +9,8 @@ const { questionRoutes } = require("./routes/questions");
 const { quizRoutes } = require("./routes/quiz");
 const { verifyToken } = require("./middleware/verifyToken");
 
+const { EXERCISE_DATA } = require("./data/Exercises");
+
 dotenv.config();
 
 const app = express();
@@ -25,11 +27,15 @@ app.get("/ping", (req, res) => {
     res.status(200).send("Server is alive 🚀");
 });
 
+app.get("/api/exercises", (req, res) => {
+    res.status(200).json(EXERCISE_DATA);
+});
+
 app.listen(4000, () => {
     console.log("Server running on http://localhost:4000");
 });
 
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("*/2 * * * *", async () => {
     try {
         const url = "https://quiz-app-backend-code.onrender.com/ping";
 
